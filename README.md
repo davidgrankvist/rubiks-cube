@@ -1,0 +1,3 @@
+# cube-puzzle
+
+Cube puzzle.
