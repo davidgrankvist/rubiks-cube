@@ -2,7 +2,7 @@
 #define cube_h
 
 #include <stdint.h>
-#include "raylib.h"
+#include "common.h"
 
 /*
  * Folded out sides for reference.
@@ -57,6 +57,7 @@ typedef struct {
 typedef struct {
     Cubie cubies[NUM_CUBIES];
     Side sides[NUM_SIDES];
+    float angle;
 } Cube;
 
 void init_cube(Cube* cube);

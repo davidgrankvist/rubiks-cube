@@ -148,21 +148,29 @@ static void draw_cubie(Cubie* cubie) {
         quad.color = BLUE;
         draw_quad(&quad);
     }
-
-    //DrawCube(cubie->center, 0.1, 0.1, 0.1, BLACK);
 }
 
 void update_cube(Cube* cube) {
-    //DrawCube(corner_front_top_left, 0.1, 0.1, 0.1, BLUE);
-    //DrawCube(corner_front_top_right, 0.1, 0.1, 0.1, BLUE);
-    //DrawCube(corner_front_bottom_left, 0.1, 0.1, 0.1, BLUE);
-    //DrawCube(corner_front_bottom_right, 0.1, 0.1, 0.1, BLUE);
-    //DrawCube(corner_back_top_left, 0.1, 0.1, 0.1, BLUE);
-    //DrawCube(corner_back_top_right, 0.1, 0.1, 0.1, BLUE);
-    //DrawCube(corner_back_bottom_left, 0.1, 0.1, 0.1, BLUE);
-    //DrawCube(corner_back_bottom_right, 0.1, 0.1, 0.1, BLUE);
+    cube->angle += 1.0f;
 
+    rlPushMatrix();
+    rlRotatef(cube->angle, 0, 0, 1);
+    rlBegin(RL_TRIANGLES);
     for (int i = 0; i < NUM_CUBIES; i++) {
-        draw_cubie(&cube->cubies[i]);
+        Cubie cubie = cube->cubies[i];
+        if (IS_RED(cubie.sides)) {
+            draw_cubie(&cubie);
+        }
     }
+    rlEnd();
+    rlPopMatrix();
+
+    rlBegin(RL_TRIANGLES);
+    for (int i = 0; i < NUM_CUBIES; i++) {
+        Cubie cubie = cube->cubies[i];
+        if (!IS_RED(cubie.sides)) {
+            draw_cubie(&cubie);
+        }
+    }
+    rlEnd();
 }
