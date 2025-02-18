@@ -21,7 +21,7 @@ int main() {
     SetTargetFPS(60);
 
     while(!WindowShouldClose()) {
-        UpdateCamera(&camera, CAMERA_ORBITAL);
+        //UpdateCamera(&camera, CAMERA_ORBITAL);
 
         BeginDrawing();
             ClearBackground(RAYWHITE);

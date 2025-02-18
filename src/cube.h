@@ -12,8 +12,8 @@
  *        yellow
  */
 
-#define SET_BIT(b) (1 << b)
-#define HAS_BIT(n, b) (n & SET_BIT(b))
+#define SINGLE_BIT(b) (1 << b)
+#define HAS_BIT(n, b) (n & SINGLE_BIT(b))
 
 #define SIDE_WHITE 0
 #define SIDE_GREEN 1
@@ -22,12 +22,19 @@
 #define SIDE_ORANGE 4
 #define SIDE_YELLOW 5
 
-#define BIT_WHITE SET_BIT(SIDE_WHITE)
-#define BIT_GREEN SET_BIT(SIDE_GREEN)
-#define BIT_RED SET_BIT(SIDE_RED)
-#define BIT_BLUE SET_BIT(SIDE_BLUE)
-#define BIT_ORANGE SET_BIT(SIDE_ORANGE)
-#define BIT_YELLOW SET_BIT(SIDE_YELLOW)
+#define IS_WHITE(n) HAS_BIT(n, SIDE_WHITE)
+#define IS_GREEN(n) HAS_BIT(n, SIDE_GREEN)
+#define IS_RED(n) HAS_BIT(n, SIDE_RED)
+#define IS_BLUE(n) HAS_BIT(n, SIDE_BLUE)
+#define IS_ORANGE(n) HAS_BIT(n, SIDE_ORANGE)
+#define IS_YELLOW(n) HAS_BIT(n, SIDE_YELLOW)
+
+#define BIT_WHITE SINGLE_BIT(SIDE_WHITE)
+#define BIT_GREEN SINGLE_BIT(SIDE_GREEN)
+#define BIT_RED SINGLE_BIT(SIDE_RED)
+#define BIT_BLUE SINGLE_BIT(SIDE_BLUE)
+#define BIT_ORANGE SINGLE_BIT(SIDE_ORANGE)
+#define BIT_YELLOW SINGLE_BIT(SIDE_YELLOW)
 
 typedef struct {
     // bit flags to indicate which sides the cubie belongs to
