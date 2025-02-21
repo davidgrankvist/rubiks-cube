@@ -1,7 +1,7 @@
 #ifndef render_h
 #define render_h
 
-#include "cube.h"
+#include "common.h"
 
 typedef struct {
     Vector3 top_left;
@@ -9,11 +9,14 @@ typedef struct {
     Vector3 bottom_right;
     Vector3 top_right;
     Color color;
+    bool is_c;
 } Quad;
 
-// counterclockwise
+// direction determined by "is_rev"
 void draw_quad(Quad* quad);
+// counterclockwise
+void draw_quad_cc(Quad* quad);
 // clockwise
-void draw_quad_rev(Quad* quad);
+void draw_quad_c(Quad* quad);
 
 #endif

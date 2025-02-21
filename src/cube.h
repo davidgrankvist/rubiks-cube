@@ -1,8 +1,8 @@
 #ifndef cube_h
 #define cube_h
 
-#include <stdint.h>
 #include "common.h"
+#include "render.h"
 
 /*
  * Folded out sides for reference.
@@ -36,23 +36,26 @@
 #define BIT_ORANGE SINGLE_BIT(SIDE_ORANGE)
 #define BIT_YELLOW SINGLE_BIT(SIDE_YELLOW)
 
-typedef struct {
-    // bit flags to indicate which sides the cubie belongs to
-    uint8_t sides;
-    // cubie reference position to rotate
-    Vector3 center;
-} Cubie;
-
-typedef struct {
-    // current rotation of the side
-    float angle;
-    // axis to rotate side about
-    Vector3 normal;
-} Side;
-
 // actually 26, but 3x3x3 makes looping easier
 #define NUM_CUBIES 27
 #define NUM_SIDES 6
+#define MAX_NUM_QUADS 3
+
+typedef struct {
+    // logical state
+    uint8_t sides;
+    uint8_t color[NUM_SIDES];
+
+    // rendering state
+    Vector3 center;
+    uint8_t num_quads;
+    Quad quads[MAX_NUM_QUADS];
+} Cubie;
+
+typedef struct {
+    float angle;
+    Vector3 normal;
+} Side;
 
 typedef struct {
     Cubie cubies[NUM_CUBIES];
