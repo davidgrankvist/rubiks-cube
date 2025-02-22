@@ -1,4 +1,5 @@
 #include "cube.h"
+#include "math.h"
 
 #define CUBE_SIDE 3
 // cube half side
@@ -161,6 +162,7 @@ static void init_cubies(Cube* cube) {
             for (int x = 0; x < 3; x++) {
                 Cubie cubie;
                 cubie.center = displace_cubie(x, y, z);
+                // before any rotation is applied, front = red and so on
                 cubie.sides = get_side_colors(x, y, z);
                 init_quads(&cubie);
 
@@ -170,9 +172,18 @@ static void init_cubies(Cube* cube) {
     }
 }
 
+static void init_sides(Cube* cube) {
+    cube->sides[SIDE_TOP].normal = (Vector3) { 0.0f, 1.0f, 0.0f }; 
+    cube->sides[SIDE_LEFT].normal = (Vector3) { 1.0f, 0.0f, 0.0f }; 
+    cube->sides[SIDE_FRONT].normal = (Vector3) { 0.0f, 0.0f, 1.0f }; 
+    cube->sides[SIDE_RIGHT].normal = (Vector3) { 1.0f, 0.0f, 0.0f }; 
+    cube->sides[SIDE_BACK].normal = (Vector3) { 0.0f, 0.0f, 1.0f }; 
+    cube->sides[SIDE_BOTTOM].normal = (Vector3) { 0.0f, 1.0f, 0.0f }; 
+}
+
 void init_cube(Cube* cube) {
     init_cubies(cube);
-    // init_sides(cube);
+    init_sides(cube);
 }
 
 static void rotate_quad(Quad* quad, Matrix* rotation) {
@@ -182,23 +193,108 @@ static void rotate_quad(Quad* quad, Matrix* rotation) {
     quad->bottom_right = Vector3Transform(quad->bottom_right, *rotation);
 }
 
-static void update_cubie(Cubie* cubie, Matrix* rotation) {
+static void update_cubie(Cubie* cubie, Matrix* rotation, uint8_t rotation_target) {
     for (int i = 0; i < cubie->num_quads; i++) {
         Quad* quad = &cubie->quads[i];
-        if (IS_RED(cubie->sides)) {
+        if (HAS_BIT(cubie->sides, rotation_target)) {
             rotate_quad(quad, rotation);
         }
         draw_quad(quad);
     }
 }
 
+typedef struct {
+    uint8_t target; 
+    float sign;
+    bool did_start;
+} SideRotation;
+
+static void setup_side_rotation(SideRotation* side_rotation, uint8_t target, bool reverse) {
+    side_rotation->did_start = true;
+    side_rotation->target = target;
+    side_rotation->sign = 1.0f;
+
+    if (reverse) {
+        side_rotation->sign *= -1;
+    }
+}
+
+// map input to a rotation operation
+static void check_input(Cube* cube, SideRotation* side_rotation) {
+    // wait for animation to finish before rotating again
+    if (cube->is_rotating) {
+        return;
+    }
+
+    side_rotation->did_start = false;
+    bool reverse = IsKeyDown(KEY_LEFT_SHIFT);
+
+    if (IsKeyPressed(KEY_W)) {
+        setup_side_rotation(side_rotation, SIDE_TOP, reverse);
+    }
+    if (IsKeyPressed(KEY_A)) {
+        setup_side_rotation(side_rotation, SIDE_LEFT, reverse);
+    }
+    if (IsKeyPressed(KEY_S)) {
+        setup_side_rotation(side_rotation, SIDE_FRONT, reverse);
+    }
+    if (IsKeyPressed(KEY_D)) {
+        setup_side_rotation(side_rotation, SIDE_RIGHT, reverse);
+    }
+    if (IsKeyPressed(KEY_Q)) {
+        setup_side_rotation(side_rotation, SIDE_BACK, reverse);
+    }
+    if (IsKeyPressed(KEY_E)) {
+        setup_side_rotation(side_rotation, SIDE_BOTTOM, reverse);
+    }
+}
+
+static void start_rotation(Cube* cube, SideRotation* side_rotation) {
+    if (cube->is_rotating || !side_rotation->did_start) {
+        return; 
+    }
+
+    cube->is_rotating = true;
+    cube->angle = 0;
+    cube->angle_sign = side_rotation->sign; 
+    cube->angle_target = 90.0f * side_rotation->sign;
+    cube->rotation_target = side_rotation->target;
+}
+
+static bool rotation_is_done(Cube* cube) {
+    return abs(cube->angle - cube->angle_target) < 0.1f;     
+}
+
+static void check_rotation(Cube* cube) {
+    if (!cube->is_rotating) {
+        return;
+    }
+
+    if (rotation_is_done(cube)) {
+        cube->is_rotating = false;
+        cube->rotation_target = SIDE_NONE;
+        // TODO: also update current sides of rotated cubies
+        return;
+    }
+
+    Vector3 normal = cube->sides[cube->rotation_target].normal; 
+    cube->rotation = MatrixRotate(normal, DEG2RAD * ROTATION_SPEED * cube->angle_sign * -1);
+    cube->angle += (cube->angle_sign) * ROTATION_SPEED;
+}
+
 void update_cube(Cube* cube) {
-    Matrix rotation = MatrixRotateZ(DEG2RAD * 1);
+    SideRotation side_rotation;
+    check_input(cube, &side_rotation);
+    start_rotation(cube, &side_rotation);
+    check_rotation(cube);
+
+    Matrix* rotation = &cube->rotation;
+    uint8_t rotation_target = cube->rotation_target;
 
     rlBegin(RL_TRIANGLES);
     for (int i = 0; i < NUM_CUBIES; i++) {
         Cubie* cubie = &cube->cubies[i];
-        update_cubie(cubie, &rotation);
+        update_cubie(cubie, rotation, rotation_target);
     }
     rlEnd();
 }
