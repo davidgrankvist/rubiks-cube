@@ -50,7 +50,12 @@
 // actually 26, but 3x3x3 makes looping easier
 #define NUM_CUBIES 27
 #define NUM_SIDES 6
-#define MAX_NUM_QUADS 3
+/*
+ * In theory there are only up to 3 stickers per cubie,
+ * but we need extra quads to paint the inner sides
+ * of the cubie during rotations.
+ */
+#define MAX_NUM_QUADS 6
 
 typedef struct {
     // current sides - bit flags to query for which cubies to rotate

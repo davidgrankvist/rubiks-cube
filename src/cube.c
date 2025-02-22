@@ -68,89 +68,77 @@ static void init_quads(Cubie* cubie) {
     float y = cubie->center.y;
     float z = cubie->center.z;
 
-    if (IS_RED(cubie->sides)) {
-        // red = front
-        Quad quad;
-        quad.top_left = (Vector3){ x - CUIHS, y + CUIHS, z + CUIHS };
-        quad.bottom_left = (Vector3){ x - CUIHS, y - CUIHS, z + CUIHS };
-        quad.bottom_right = (Vector3){ x + CUIHS, y - CUIHS, z + CUIHS };
-        quad.top_right = (Vector3){ x + CUIHS, y + CUIHS, z + CUIHS };
+    // red = front
+    Quad qr;
+    qr.top_left = (Vector3){ x - CUIHS, y + CUIHS, z + CUIHS };
+    qr.bottom_left = (Vector3){ x - CUIHS, y - CUIHS, z + CUIHS };
+    qr.bottom_right = (Vector3){ x + CUIHS, y - CUIHS, z + CUIHS };
+    qr.top_right = (Vector3){ x + CUIHS, y + CUIHS, z + CUIHS };
 
-        quad.is_c = false;
-        quad.color = RED;
-        
-        cubie->quads[iquad++] = quad;
-    }
+    qr.is_c = false;
+    qr.color = IS_RED(cubie->sides) ? RED : BLACK;
 
-    if (IS_ORANGE(cubie->sides)) {
-        // orange = back
-        Quad quad;
-        quad.top_left = (Vector3){ x - CUIHS, y + CUIHS, z - CUIHS };
-        quad.bottom_left = (Vector3){ x - CUIHS, y - CUIHS, z - CUIHS };
-        quad.bottom_right = (Vector3){ x + CUIHS, y - CUIHS, z - CUIHS };
-        quad.top_right = (Vector3){ x + CUIHS, y + CUIHS, z - CUIHS };
+    cubie->quads[iquad++] = qr;
 
-        quad.is_c = true;
-        quad.color = ORANGE;
+    // orange = back
+    Quad qo;
+    qo.top_left = (Vector3){ x - CUIHS, y + CUIHS, z - CUIHS };
+    qo.bottom_left = (Vector3){ x - CUIHS, y - CUIHS, z - CUIHS };
+    qo.bottom_right = (Vector3){ x + CUIHS, y - CUIHS, z - CUIHS };
+    qo.top_right = (Vector3){ x + CUIHS, y + CUIHS, z - CUIHS };
 
-        cubie->quads[iquad++] = quad;
-    }
+    qo.is_c = true;
+    qo.color = IS_ORANGE(cubie->sides) ? ORANGE : BLACK;
 
-    if (IS_WHITE(cubie->sides)) {
-        // white = top
-        Quad quad;
-        quad.top_left = (Vector3){ x - CUIHS, y + CUIHS, z - CUIHS };
-        quad.bottom_left = (Vector3){ x - CUIHS, y + CUIHS, z + CUIHS };
-        quad.bottom_right = (Vector3){ x + CUIHS, y + CUIHS, z + CUIHS };
-        quad.top_right = (Vector3){ x + CUIHS, y + CUIHS, z - CUIHS };
+    cubie->quads[iquad++] = qo;
 
-        quad.is_c = false;
-        quad.color = WHITE;
+    // white = top
+    Quad qw;
+    qw.top_left = (Vector3){ x - CUIHS, y + CUIHS, z - CUIHS };
+    qw.bottom_left = (Vector3){ x - CUIHS, y + CUIHS, z + CUIHS };
+    qw.bottom_right = (Vector3){ x + CUIHS, y + CUIHS, z + CUIHS };
+    qw.top_right = (Vector3){ x + CUIHS, y + CUIHS, z - CUIHS };
 
-        cubie->quads[iquad++] = quad;
-    }
+    qw.is_c = false;
+    qw.color = IS_WHITE(cubie->sides) ? WHITE : BLACK;
 
-    if (IS_YELLOW(cubie->sides)) {
-        // yellow = bottom
-        Quad quad;
-        quad.top_left = (Vector3){ x - CUIHS, y - CUIHS, z - CUIHS };
-        quad.bottom_left = (Vector3){ x - CUIHS, y - CUIHS, z + CUIHS };
-        quad.bottom_right = (Vector3){ x + CUIHS, y - CUIHS, z + CUIHS };
-        quad.top_right = (Vector3){ x + CUIHS, y - CUIHS, z - CUIHS };
+    cubie->quads[iquad++] = qw;
 
-        quad.is_c = true;
-        quad.color = YELLOW;
+    // yellow = bottom
+    Quad qy;
+    qy.top_left = (Vector3){ x - CUIHS, y - CUIHS, z - CUIHS };
+    qy.bottom_left = (Vector3){ x - CUIHS, y - CUIHS, z + CUIHS };
+    qy.bottom_right = (Vector3){ x + CUIHS, y - CUIHS, z + CUIHS };
+    qy.top_right = (Vector3){ x + CUIHS, y - CUIHS, z - CUIHS };
 
-        cubie->quads[iquad++] = quad;
-    }
+    qy.is_c = true;
+    qy.color = IS_YELLOW(cubie->sides) ? YELLOW : BLACK;
 
-    if (IS_GREEN(cubie->sides)) {
-        // green = left
-        Quad quad;
-        quad.top_left = (Vector3){ x - CUIHS, y + CUIHS, z + CUIHS };
-        quad.bottom_left = (Vector3){ x - CUIHS, y - CUIHS, z + CUIHS };
-        quad.bottom_right = (Vector3){ x - CUIHS, y - CUIHS, z - CUIHS };
-        quad.top_right = (Vector3){ x - CUIHS, y + CUIHS, z - CUIHS };
+    cubie->quads[iquad++] = qy;
 
-        quad.is_c = true;
-        quad.color = GREEN;
+    // green = left
+    Quad qg;
+    qg.top_left = (Vector3){ x - CUIHS, y + CUIHS, z + CUIHS };
+    qg.bottom_left = (Vector3){ x - CUIHS, y - CUIHS, z + CUIHS };
+    qg.bottom_right = (Vector3){ x - CUIHS, y - CUIHS, z - CUIHS };
+    qg.top_right = (Vector3){ x - CUIHS, y + CUIHS, z - CUIHS };
 
-        cubie->quads[iquad++] = quad;
-    }
+    qg.is_c = true;
+    qg.color = IS_GREEN(cubie->sides) ? GREEN : BLACK;
 
-    if (IS_BLUE(cubie->sides)) {
-        // blue = right
-        Quad quad;
-        quad.top_left = (Vector3){ x + CUIHS, y + CUIHS, z + CUIHS };
-        quad.bottom_left = (Vector3){ x + CUIHS, y - CUIHS, z + CUIHS };
-        quad.bottom_right = (Vector3){ x + CUIHS, y - CUIHS, z - CUIHS };
-        quad.top_right = (Vector3){ x + CUIHS, y + CUIHS, z - CUIHS };
+    cubie->quads[iquad++] = qg;
 
-        quad.is_c = false;
-        quad.color = BLUE;
+    // blue = right
+    Quad qb;
+    qb.top_left = (Vector3){ x + CUIHS, y + CUIHS, z + CUIHS };
+    qb.bottom_left = (Vector3){ x + CUIHS, y - CUIHS, z + CUIHS };
+    qb.bottom_right = (Vector3){ x + CUIHS, y - CUIHS, z - CUIHS };
+    qb.top_right = (Vector3){ x + CUIHS, y + CUIHS, z - CUIHS };
 
-        cubie->quads[iquad++] = quad;
-    }
+    qb.is_c = false;
+    qb.color = IS_BLUE(cubie->sides) ? BLUE : BLACK;
+
+    cubie->quads[iquad++] = qb;
 
     cubie->num_quads = iquad;
 }
