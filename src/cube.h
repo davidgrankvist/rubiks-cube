@@ -81,7 +81,7 @@ typedef struct {
     Vector3 normal;
 } Side;
 
-#define ROTATION_SPEED 1
+#define ROTATION_SPEED 2
 
 typedef struct {
     Cubie cubies[NUM_CUBIES];
