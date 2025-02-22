@@ -14,6 +14,8 @@
 
 #define SINGLE_BIT(b) (1 << b)
 #define HAS_BIT(n, b) (n & SINGLE_BIT(b))
+#define BIT_AT(n, b) !!(n & SINGLE_BIT(b))
+#define SET_SINGLE_BIT(v, b) (v << b)
 
 #define SIDE_WHITE 0
 #define SIDE_GREEN 1

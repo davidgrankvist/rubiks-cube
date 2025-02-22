@@ -174,11 +174,11 @@ static void init_cubies(Cube* cube) {
 
 static void init_sides(Cube* cube) {
     cube->sides[SIDE_TOP].normal = (Vector3) { 0.0f, 1.0f, 0.0f }; 
-    cube->sides[SIDE_LEFT].normal = (Vector3) { 1.0f, 0.0f, 0.0f }; 
+    cube->sides[SIDE_LEFT].normal = (Vector3) { -1.0f, 0.0f, 0.0f }; 
     cube->sides[SIDE_FRONT].normal = (Vector3) { 0.0f, 0.0f, 1.0f }; 
     cube->sides[SIDE_RIGHT].normal = (Vector3) { 1.0f, 0.0f, 0.0f }; 
-    cube->sides[SIDE_BACK].normal = (Vector3) { 0.0f, 0.0f, 1.0f }; 
-    cube->sides[SIDE_BOTTOM].normal = (Vector3) { 0.0f, 1.0f, 0.0f }; 
+    cube->sides[SIDE_BACK].normal = (Vector3) { 0.0f, 0.0f, -1.0f }; 
+    cube->sides[SIDE_BOTTOM].normal = (Vector3) { 0.0f, -1.0f, 0.0f }; 
 }
 
 void init_cube(Cube* cube) {
@@ -265,6 +265,214 @@ static bool rotation_is_done(Cube* cube) {
     return abs(cube->angle - cube->angle_target) < 0.1f;     
 }
 
+static uint8_t rotate_cubie_sides(uint8_t prev_sides, uint8_t target, bool reverse) {
+    uint8_t sides = 0;
+
+    uint8_t right = BIT_AT(prev_sides, SIDE_RIGHT);
+    uint8_t bottom = BIT_AT(prev_sides, SIDE_BOTTOM);
+    uint8_t left = BIT_AT(prev_sides, SIDE_LEFT);
+    uint8_t top = BIT_AT(prev_sides, SIDE_TOP);
+    uint8_t front = BIT_AT(prev_sides, SIDE_FRONT);
+    uint8_t back = BIT_AT(prev_sides, SIDE_BACK);
+
+    switch(target) {
+        case SIDE_TOP: {
+            if (reverse) {
+                /*
+                 * Counter clockwise:
+                 *   front -> right
+                 *   left -> front
+                 *   back -> left
+                 *   right -> back
+                 */
+                right = BIT_AT(prev_sides, SIDE_FRONT);
+                front = BIT_AT(prev_sides, SIDE_LEFT);
+                left = BIT_AT(prev_sides, SIDE_BACK);
+                back = BIT_AT(prev_sides, SIDE_RIGHT);
+            } else {
+                /*
+                 * Clockwise:
+                 *   front -> left
+                 *   left -> back
+                 *   back -> right
+                 *   right -> front
+                 */
+                left = BIT_AT(prev_sides, SIDE_FRONT);
+                back = BIT_AT(prev_sides, SIDE_LEFT);
+                right = BIT_AT(prev_sides, SIDE_BACK);
+                front = BIT_AT(prev_sides, SIDE_RIGHT);
+            }
+            
+            break;
+        }
+        case SIDE_LEFT: {
+            if (reverse) {
+                /*
+                 * Counter clockwise:
+                 *   front -> top
+                 *   top -> back
+                 *   back -> bottom
+                 *   bottom -> front
+                 */
+                top = BIT_AT(prev_sides, SIDE_FRONT);
+                back = BIT_AT(prev_sides, SIDE_TOP);
+                bottom = BIT_AT(prev_sides, SIDE_BACK);
+                front = BIT_AT(prev_sides, SIDE_BOTTOM);
+            } else {
+                /*
+                 * Clockwise:
+                 *   front -> bottom
+                 *   top -> front
+                 *   back -> top
+                 *   bottom -> back
+                 */
+                bottom = BIT_AT(prev_sides, SIDE_FRONT);
+                front = BIT_AT(prev_sides, SIDE_TOP);
+                top = BIT_AT(prev_sides, SIDE_BACK);
+                back = BIT_AT(prev_sides, SIDE_BOTTOM);
+            }
+            
+            break;
+        }
+        case SIDE_FRONT: {
+            if (reverse) {
+                /*
+                 * Counter clockwise:
+                 *   top -> left
+                 *   right -> top
+                 *   bottom -> right
+                 *   left -> bottom
+                 */
+                left = BIT_AT(prev_sides, SIDE_TOP);
+                top = BIT_AT(prev_sides, SIDE_RIGHT);
+                right = BIT_AT(prev_sides, SIDE_BOTTOM);
+                bottom = BIT_AT(prev_sides, SIDE_LEFT);
+            } else {
+                /*
+                 * Clockwise:
+                 *   top -> right
+                 *   right -> bottom
+                 *   bottom -> left
+                 *   left -> top
+                 */
+                right = BIT_AT(prev_sides, SIDE_TOP);
+                bottom = BIT_AT(prev_sides, SIDE_RIGHT);
+                left = BIT_AT(prev_sides, SIDE_BOTTOM);
+                top = BIT_AT(prev_sides, SIDE_LEFT);
+            }
+            
+            break;
+        }
+        case SIDE_RIGHT: {
+            if (reverse) {
+                /*
+                 * Counter clockwise:
+                 *   top -> front
+                 *   back -> top
+                 *   bottom -> back
+                 *   front -> bottom
+                 */
+                front = BIT_AT(prev_sides, SIDE_TOP);
+                top = BIT_AT(prev_sides, SIDE_BACK);
+                back = BIT_AT(prev_sides, SIDE_BOTTOM);
+                bottom = BIT_AT(prev_sides, SIDE_FRONT);
+            } else {
+                /*
+                 * Clockwise:
+                 *   top -> back
+                 *   back -> bottom
+                 *   bottom -> front
+                 *   front -> top
+                 */
+                back = BIT_AT(prev_sides, SIDE_TOP);
+                bottom = BIT_AT(prev_sides, SIDE_BACK);
+                front = BIT_AT(prev_sides, SIDE_BOTTOM);
+                top = BIT_AT(prev_sides, SIDE_FRONT);
+            }
+            
+            break;
+        }
+        case SIDE_BACK: {
+            if (reverse) {
+                /*
+                 * Counter clockwise:
+                 *   top -> right
+                 *   left -> top
+                 *   bottom -> left
+                 *   right -> bottom
+                 */
+                right = BIT_AT(prev_sides, SIDE_TOP);
+                top = BIT_AT(prev_sides, SIDE_LEFT);
+                left = BIT_AT(prev_sides, SIDE_BOTTOM);
+                bottom = BIT_AT(prev_sides, SIDE_RIGHT);
+            } else {
+                /*
+                 * Clockwise:
+                 *   top -> left
+                 *   left -> bottom
+                 *   bottom -> right
+                 *   right -> top
+                 */
+                left = BIT_AT(prev_sides, SIDE_TOP);
+                bottom = BIT_AT(prev_sides, SIDE_LEFT);
+                right = BIT_AT(prev_sides, SIDE_BOTTOM);
+                top = BIT_AT(prev_sides, SIDE_RIGHT);
+            }
+            
+            break;
+        }
+        case SIDE_BOTTOM: {
+            if (reverse) {
+                /*
+                 * Counter clockwise:
+                 *   left -> back
+                 *   front -> left
+                 *   right -> front
+                 *   back -> right
+                 */
+                back = BIT_AT(prev_sides, SIDE_LEFT);
+                left = BIT_AT(prev_sides, SIDE_FRONT);
+                front = BIT_AT(prev_sides, SIDE_RIGHT);
+                right = BIT_AT(prev_sides, SIDE_BACK);
+            } else {
+                /*
+                 * Clockwise:
+                 *   left -> front
+                 *   front -> right
+                 *   right -> back
+                 *   back -> left
+                 */
+                front = BIT_AT(prev_sides, SIDE_LEFT);
+                right = BIT_AT(prev_sides, SIDE_FRONT);
+                back = BIT_AT(prev_sides, SIDE_RIGHT);
+                left = BIT_AT(prev_sides, SIDE_BACK);
+            }
+            
+            break;
+        }
+    }
+
+    sides = SET_SINGLE_BIT(right, SIDE_RIGHT)
+        | SET_SINGLE_BIT(bottom, SIDE_BOTTOM)
+        | SET_SINGLE_BIT(left, SIDE_LEFT)
+        | SET_SINGLE_BIT(top, SIDE_TOP)
+        | SET_SINGLE_BIT(front, SIDE_FRONT)
+        | SET_SINGLE_BIT(back, SIDE_BACK);
+            
+    return sides;
+}
+
+// after the rotation animation has finished, make sure current sides reflect the rotation
+static void update_current_sides(Cube* cube) {
+    for (int i = 0; i < NUM_CUBIES; i++) {
+        Cubie* cubie = &cube->cubies[i];
+        if (HAS_BIT(cubie->sides, cube->rotation_target)) {
+            uint8_t sides = rotate_cubie_sides(cubie->sides, cube->rotation_target, cube->angle_sign < 0);
+            cubie->sides = sides;
+        }
+    }
+}
+
 static void check_rotation(Cube* cube) {
     if (!cube->is_rotating) {
         return;
@@ -272,8 +480,8 @@ static void check_rotation(Cube* cube) {
 
     if (rotation_is_done(cube)) {
         cube->is_rotating = false;
+        update_current_sides(cube);
         cube->rotation_target = SIDE_NONE;
-        // TODO: also update current sides of rotated cubies
         return;
     }
 
