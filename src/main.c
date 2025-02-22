@@ -19,10 +19,9 @@ int main() {
         update_camera(&camera);
 
         BeginDrawing();
-            ClearBackground(RAYWHITE);
+            ClearBackground(LIGHTGRAY);
             BeginMode3D(camera);
                 update_cube(&cube);
-                DrawGrid(10, 1.0f);
             EndMode3D();
         EndDrawing();
     }
