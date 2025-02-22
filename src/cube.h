@@ -38,28 +38,14 @@
 #define BIT_ORANGE SINGLE_BIT(SIDE_ORANGE)
 #define BIT_YELLOW SINGLE_BIT(SIDE_YELLOW)
 
-// use similar bits for current orientation
-#define SIDE_TOP 0
-#define SIDE_LEFT 1
-#define SIDE_FRONT 2
-#define SIDE_RIGHT 3
-#define SIDE_BACK 4
-#define SIDE_BOTTOM 5
+// use similar bits as initial colors for current orientation
+#define SIDE_TOP SIDE_WHITE
+#define SIDE_LEFT SIDE_GREEN
+#define SIDE_FRONT SIDE_RED
+#define SIDE_RIGHT SIDE_BLUE
+#define SIDE_BACK SIDE_ORANGE
+#define SIDE_BOTTOM SIDE_YELLOW
 #define SIDE_NONE 6
-
-#define IS_TOP(n) HAS_BIT(n, SIDE_WHITE)
-#define IS_LEFT(n) HAS_BIT(n, SIDE_GREEN)
-#define IS_FRONT(n) HAS_BIT(n, SIDE_RED)
-#define IS_RIGHT(n) HAS_BIT(n, SIDE_BLUE)
-#define IS_BACK(n) HAS_BIT(n, SIDE_ORANGE)
-#define IS_BOTTOM(n) HAS_BIT(n, SIDE_YELLOW)
-
-#define BIT_TOP SINGLE_BIT(SIDE_WHITE)
-#define BIT_LEFT SINGLE_BIT(SIDE_GREEN)
-#define BIT_FRONT SINGLE_BIT(SIDE_RED)
-#define BIT_RIGHT SINGLE_BIT(SIDE_BLUE)
-#define BIT_BACK SINGLE_BIT(SIDE_ORANGE)
-#define BIT_BOTTOM SINGLE_BIT(SIDE_YELLOW)
 
 // actually 26, but 3x3x3 makes looping easier
 #define NUM_CUBIES 27
@@ -67,17 +53,17 @@
 #define MAX_NUM_QUADS 3
 
 typedef struct {
-    // logical state
+    // current sides - bit flags to query for which cubies to rotate
     uint8_t sides;
-    uint8_t color[NUM_SIDES];
 
-    // rendering state
+    // rendering state - position and color of "stickers"
     Vector3 center;
     uint8_t num_quads;
     Quad quads[MAX_NUM_QUADS];
 } Cubie;
 
 typedef struct {
+    // axis to rotate cubies about when this side is rotated
     Vector3 normal;
 } Side;
 
@@ -87,7 +73,7 @@ typedef struct {
     Cubie cubies[NUM_CUBIES];
     Side sides[NUM_SIDES];
 
-    // render state for rotation
+    // rendering state - keep track of rotation animation
     float angle;
     float angle_target;
     float angle_sign;
