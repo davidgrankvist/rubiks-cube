@@ -262,7 +262,7 @@ static void start_rotation(Cube* cube, SideRotation* side_rotation) {
 }
 
 static bool rotation_is_done(Cube* cube) {
-    return abs(cube->angle - cube->angle_target) < 0.1f;     
+    return fabs(cube->angle - cube->angle_target) < 0.1f;
 }
 
 static uint8_t rotate_cubie_sides(uint8_t prev_sides, uint8_t target, bool reverse) {
